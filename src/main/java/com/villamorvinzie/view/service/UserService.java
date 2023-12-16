@@ -1,5 +1,11 @@
 package com.villamorvinzie.view.service;
 
+import java.util.Optional;
+
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.villamorvinzie.view.domain.User;
@@ -7,50 +13,60 @@ import com.villamorvinzie.view.dto.UserDto;
 import com.villamorvinzie.view.mapper.UserMapper;
 import com.villamorvinzie.view.repository.UserRepository;
 
-import reactor.core.publisher.Mono;
-
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    public Mono<UserDto> createUser(UserDto userDto) {
-        return userRepository.existsByUsernameIgnoreCase(userDto.username()).flatMap(isPresent -> {
-            if (isPresent) {
-                throw new RuntimeException("User already exists.");
-            }
-            Mono<User> monoUser = userRepository.save(UserMapper.toEntity(userDto));
-            return monoUser.flatMap(user -> Mono.just(UserMapper.toDto(user)));
-        });
+    public UserDto createUser(UserDto userDto) {
+        if (userRepository.existsByUsernameIgnoreCase(userDto.username())) {
+            throw new RuntimeException("User already exists.");
+        }
+        User user = UserMapper.toEntity(userDto);
+        user.setPassword(passwordEncoder.encode(userDto.password()));
+        user = userRepository.save(user);
+        return UserMapper.toDto(user);
     }
 
-    public Mono<UserDto> readUser(String username) {
-        Mono<User> monoUser = userRepository.findByUsername(username);
-        return monoUser.flatMap(user -> Mono.just(UserMapper.toDto(user)));
+    public UserDto readUser(String username) {
+        Optional<User> optUser = userRepository.findByUsername(username);
+        if (optUser.isEmpty()) {
+            throw new RuntimeException("User not found!");
+        }
+        return UserMapper.toDto(optUser.get());
     }
 
-    public Mono<UserDto> updateUser(String username, UserDto userDto) {
-        userRepository.existsByUsernameIgnoreCase(userDto.username()).doOnSuccess(isPresent -> {
-            if (isPresent) {
-                throw new RuntimeException("User already exists.");
-            }
-        });
+    public UserDto updateUser(String username, UserDto userDto) {
+        User savedUser;
 
-        return userRepository.findByUsername(username).flatMap(user -> {
+        if (userRepository.existsByUsernameIgnoreCase(userDto.username())) {
+            throw new RuntimeException("User already exists.");
+        }
+
+        savedUser = userRepository.findByUsername(username).map(user -> {
             user.setEmail(userDto.email());
-            user.setPassword(userDto.password());
+            user.setPassword(passwordEncoder.encode(userDto.password()));
             user.setRoles(userDto.roles());
             user.setUsername(userDto.username());
-            Mono<User> monoUser = userRepository.save(user);
-            return monoUser.flatMap(mappedUser -> Mono.just(UserMapper.toDto(mappedUser)));
-        });
+            return userRepository.save(user);
+        }).get();
+
+        return UserMapper.toDto(savedUser);
     }
 
-    public Mono<Void> deleteUser(String username) {
-        return userRepository.deleteByUsername(username);
+    public void deleteUser(String username) {
+        userRepository.deleteByUsername(username);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Optional<User> optUser = userRepository.findByUsername(username);
+        return optUser.orElseThrow(() -> new RuntimeException("User not found."));
     }
 }

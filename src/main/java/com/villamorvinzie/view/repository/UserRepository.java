@@ -1,19 +1,21 @@
 package com.villamorvinzie.view.repository;
 
-import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
+import java.util.Optional;
+
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
 
 import com.villamorvinzie.view.domain.User;
 
-import reactor.core.publisher.Mono;
+@Repository
+public interface UserRepository extends MongoRepository<User, String> {
+    Optional<User> findByUsername(String username);
 
-public interface UserRepository extends ReactiveMongoRepository<User, String> {
-    Mono<User> findByUsername(String username);
+    void deleteByUsername(String username);
 
-    Mono<Void> deleteByUsername(String username);
+    boolean existsByUsername(String username);
 
-    Mono<Boolean> existsByUsername(String username);
-
-    default Mono<Boolean> existsByUsernameIgnoreCase(String username) {
+    default boolean existsByUsernameIgnoreCase(String username) {
         return existsByUsername(username.toLowerCase());
     }
 }
