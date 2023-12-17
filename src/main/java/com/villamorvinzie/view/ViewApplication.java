@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 @EnableMongoRepositories
 public class ViewApplication {
 
-  public static void main(String[] args) {
-    SpringApplication.run(ViewApplication.class, args);
-  }
+    public static void main(String[] args) {
+        SpringApplication.run(ViewApplication.class, args);
+    }
 }

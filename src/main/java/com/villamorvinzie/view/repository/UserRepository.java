@@ -7,13 +7,13 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserRepository extends MongoRepository<User, String> {
-  Optional<User> findByUsername(String username);
+    Optional<User> findByUsername(String username);
 
-  void deleteByUsername(String username);
+    void deleteByUsername(String username);
 
-  boolean existsByUsername(String username);
+    boolean existsByUsername(String username);
 
-  default boolean existsByUsernameIgnoreCase(String username) {
-    return existsByUsername(username.toLowerCase());
-  }
+    default boolean existsByUsernameIgnoreCase(String username) {
+        return existsByUsername(username.toLowerCase());
+    }
 }

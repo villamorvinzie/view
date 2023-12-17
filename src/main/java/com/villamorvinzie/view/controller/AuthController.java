@@ -12,19 +12,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(path = "/api/v1/auth")
 public class AuthController {
-  private final AuthService authService;
+    private final AuthService authService;
 
-  public AuthController(AuthService authService) {
-    this.authService = authService;
-  }
+    public AuthController(AuthService authService) {
+        this.authService = authService;
+    }
 
-  @PostMapping(path = "/login")
-  public JwtAuthResponseDto login(@RequestBody AuthLoginRequestDto requestDto) {
-    return authService.login(requestDto);
-  }
+    @PostMapping(path = "/login")
+    public JwtAuthResponseDto login(@RequestBody AuthLoginRequestDto requestDto) {
+        return authService.login(requestDto);
+    }
 
-  @PostMapping(path = "/register")
-  public JwtAuthResponseDto register(@RequestBody UserDto requestDto) {
-    return authService.register(requestDto);
-  }
+    @PostMapping(path = "/register")
+    public JwtAuthResponseDto register(@RequestBody UserDto requestDto) {
+        return authService.register(requestDto);
+    }
 }

@@ -15,29 +15,29 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path = "/api/v1/users")
 public class UserController {
 
-  private final UserService userService;
+    private final UserService userService;
 
-  public UserController(UserService userService) {
-    this.userService = userService;
-  }
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
-  @PostMapping
-  public UserDto createUser(@RequestBody UserDto userDto) {
-    return userService.createUser(userDto);
-  }
+    @PostMapping
+    public UserDto createUser(@RequestBody UserDto userDto) {
+        return userService.createUser(userDto);
+    }
 
-  @GetMapping(path = "/{username}")
-  public UserDto readUser(@PathVariable String username) {
-    return userService.readUser(username);
-  }
+    @GetMapping(path = "/{username}")
+    public UserDto readUser(@PathVariable String username) {
+        return userService.readUser(username);
+    }
 
-  @PutMapping(path = "/{username}")
-  public UserDto updateUser(@PathVariable String username, @RequestBody UserDto userDto) {
-    return userService.updateUser(username, userDto);
-  }
+    @PutMapping(path = "/{username}")
+    public UserDto updateUser(@PathVariable String username, @RequestBody UserDto userDto) {
+        return userService.updateUser(username, userDto);
+    }
 
-  @DeleteMapping(path = "/{username}")
-  public void deleteUser(@PathVariable String username) {
-    userService.deleteUser(username);
-  }
+    @DeleteMapping(path = "/{username}")
+    public void deleteUser(@PathVariable String username) {
+        userService.deleteUser(username);
+    }
 }
