@@ -1,5 +1,3 @@
 package com.villamorvinzie.view.dto.response;
 
-public record JwtAuthResponseDto(String token) {
-
-}
+public record JwtAuthResponseDto(String token) {}
