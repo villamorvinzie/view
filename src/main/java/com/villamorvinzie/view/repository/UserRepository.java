@@ -12,8 +12,4 @@ public interface UserRepository extends MongoRepository<User, String> {
     void deleteByUsername(String username);
 
     boolean existsByUsername(String username);
-
-    default boolean existsByUsernameIgnoreCase(String username) {
-        return existsByUsername(username.toLowerCase());
-    }
 }

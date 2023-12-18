@@ -2,6 +2,7 @@ package com.villamorvinzie.view.service;
 
 import com.villamorvinzie.view.domain.User;
 import com.villamorvinzie.view.dto.UserDto;
+import com.villamorvinzie.view.exception.UserAlreadyExistAuthenticationException;
 import com.villamorvinzie.view.mapper.UserMapper;
 import com.villamorvinzie.view.repository.UserRepository;
 import java.util.Optional;
@@ -22,9 +23,9 @@ public class UserService implements UserDetailsService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public UserDto createUser(UserDto userDto) {
-        if (userRepository.existsByUsernameIgnoreCase(userDto.username())) {
-            throw new RuntimeException("User already exists.");
+    public UserDto createUser(UserDto userDto) throws UserAlreadyExistAuthenticationException {
+        if (userRepository.existsByUsername(userDto.username())) {
+            throw new UserAlreadyExistAuthenticationException("User already exists.");
         }
         User user = UserMapper.toEntity(userDto);
         user.setPassword(passwordEncoder.encode(userDto.password()));
@@ -35,16 +36,21 @@ public class UserService implements UserDetailsService {
     public UserDto readUser(String username) {
         Optional<User> optUser = userRepository.findByUsername(username);
         if (optUser.isEmpty()) {
-            throw new RuntimeException("User not found!");
+            throw new UsernameNotFoundException("Username not found.");
         }
         return UserMapper.toDto(optUser.get());
     }
 
-    public UserDto updateUser(String username, UserDto userDto) {
+    public UserDto updateUser(String username, UserDto userDto)
+            throws UserAlreadyExistAuthenticationException {
         User savedUser;
 
-        if (userRepository.existsByUsernameIgnoreCase(userDto.username())) {
-            throw new RuntimeException("User already exists.");
+        if (userRepository.existsByUsername(userDto.username())) {
+            throw new UserAlreadyExistAuthenticationException("Username already exists.");
+        }
+
+        if (!userRepository.existsByUsername(username)) {
+            throw new UsernameNotFoundException("Username not found.");
         }
 
         savedUser =
@@ -64,12 +70,15 @@ public class UserService implements UserDetailsService {
     }
 
     public void deleteUser(String username) {
+        if (!userRepository.existsByUsername(username)) {
+            throw new UsernameNotFoundException("Username not found.");
+        }
         userRepository.deleteByUsername(username);
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username) {
         Optional<User> optUser = userRepository.findByUsername(username);
-        return optUser.orElseThrow(() -> new RuntimeException("User not found."));
+        return optUser.orElseThrow(() -> new UsernameNotFoundException("Username not found."));
     }
 }

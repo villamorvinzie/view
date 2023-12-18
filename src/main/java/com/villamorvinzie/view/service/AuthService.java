@@ -3,8 +3,10 @@ package com.villamorvinzie.view.service;
 import com.villamorvinzie.view.dto.UserDto;
 import com.villamorvinzie.view.dto.request.AuthLoginRequestDto;
 import com.villamorvinzie.view.dto.response.JwtAuthResponseDto;
+import com.villamorvinzie.view.exception.UserAlreadyExistAuthenticationException;
 import com.villamorvinzie.view.mapper.UserMapper;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -23,7 +25,8 @@ public class AuthService {
         this.jwtService = jwtService;
     }
 
-    public JwtAuthResponseDto register(UserDto requestDto) {
+    public JwtAuthResponseDto register(UserDto requestDto)
+            throws UserAlreadyExistAuthenticationException {
         UserDto userDto = userService.createUser(requestDto);
         String token = jwtService.generateToken(UserMapper.toEntity(userDto));
         return new JwtAuthResponseDto(token);
@@ -35,7 +38,7 @@ public class AuthService {
         authenticationManager.authenticate(token);
         UserDetails loggedUser = userService.loadUserByUsername(requestDto.username());
         if (loggedUser == null) {
-            throw new RuntimeException("Please check your username and/or password.");
+            throw new BadCredentialsException("Please check your username and/or password.");
         }
         String jwt = jwtService.generateToken(loggedUser);
         return new JwtAuthResponseDto(jwt);
