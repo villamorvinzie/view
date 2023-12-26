@@ -1,7 +1,7 @@
 package com.villamorvinzie.view.controller;
 
-import com.villamorvinzie.view.dto.UserDto;
 import com.villamorvinzie.view.dto.request.AuthLoginRequestDto;
+import com.villamorvinzie.view.dto.request.UserRequestDto;
 import com.villamorvinzie.view.dto.response.JwtAuthResponseDto;
 import com.villamorvinzie.view.exception.UserAlreadyExistAuthenticationException;
 import com.villamorvinzie.view.service.AuthService;
@@ -27,7 +27,7 @@ public class AuthController {
     }
 
     @PostMapping(path = "/register")
-    public ResponseEntity<JwtAuthResponseDto> register(@RequestBody UserDto requestDto)
+    public ResponseEntity<JwtAuthResponseDto> register(@RequestBody UserRequestDto requestDto)
             throws UserAlreadyExistAuthenticationException {
         return ResponseEntity.status(HttpStatus.CREATED.value()).body(authService.register(requestDto));
     }
