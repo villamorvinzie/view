@@ -1,6 +1,7 @@
 package com.villamorvinzie.view.controller;
 
-import com.villamorvinzie.view.dto.UserDto;
+import com.villamorvinzie.view.dto.request.UserRequestDto;
+import com.villamorvinzie.view.dto.response.UserResponseDto;
 import com.villamorvinzie.view.exception.UserAlreadyExistAuthenticationException;
 import com.villamorvinzie.view.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -25,19 +26,19 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto)
+    public ResponseEntity<UserResponseDto> createUser(@RequestBody UserRequestDto userDto)
             throws UserAlreadyExistAuthenticationException {
         return ResponseEntity.status(HttpStatus.CREATED.value()).body(userService.createUser(userDto));
     }
 
     @GetMapping(path = "/{username}")
-    public ResponseEntity<UserDto> readUser(@PathVariable String username) {
+    public ResponseEntity<UserResponseDto> readUser(@PathVariable String username) {
         return ResponseEntity.ok().body(userService.readUser(username));
     }
 
     @PutMapping(path = "/{username}")
-    public ResponseEntity<UserDto> updateUser(
-            @PathVariable String username, @RequestBody UserDto userDto)
+    public ResponseEntity<UserResponseDto> updateUser(
+            @PathVariable String username, @RequestBody UserRequestDto userDto)
             throws UserAlreadyExistAuthenticationException {
         return ResponseEntity.ok().body(userService.updateUser(username, userDto));
     }

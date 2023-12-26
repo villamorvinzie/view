@@ -1,8 +1,9 @@
 package com.villamorvinzie.view.service;
 
-import com.villamorvinzie.view.dto.UserDto;
 import com.villamorvinzie.view.dto.request.AuthLoginRequestDto;
+import com.villamorvinzie.view.dto.request.UserRequestDto;
 import com.villamorvinzie.view.dto.response.JwtAuthResponseDto;
+import com.villamorvinzie.view.dto.response.UserResponseDto;
 import com.villamorvinzie.view.exception.UserAlreadyExistAuthenticationException;
 import com.villamorvinzie.view.mapper.UserMapper;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,9 +26,9 @@ public class AuthService {
         this.jwtService = jwtService;
     }
 
-    public JwtAuthResponseDto register(UserDto requestDto)
+    public JwtAuthResponseDto register(UserRequestDto requestDto)
             throws UserAlreadyExistAuthenticationException {
-        UserDto userDto = userService.createUser(requestDto);
+        UserResponseDto userDto = userService.createUser(requestDto);
         String token = jwtService.generateToken(UserMapper.toEntity(userDto));
         return new JwtAuthResponseDto(token);
     }

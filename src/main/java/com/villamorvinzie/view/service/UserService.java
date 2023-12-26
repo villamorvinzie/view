@@ -1,7 +1,8 @@
 package com.villamorvinzie.view.service;
 
 import com.villamorvinzie.view.domain.User;
-import com.villamorvinzie.view.dto.UserDto;
+import com.villamorvinzie.view.dto.request.UserRequestDto;
+import com.villamorvinzie.view.dto.response.UserResponseDto;
 import com.villamorvinzie.view.exception.UserAlreadyExistAuthenticationException;
 import com.villamorvinzie.view.mapper.UserMapper;
 import com.villamorvinzie.view.repository.UserRepository;
@@ -23,7 +24,8 @@ public class UserService implements UserDetailsService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public UserDto createUser(UserDto userDto) throws UserAlreadyExistAuthenticationException {
+    public UserResponseDto createUser(UserRequestDto userDto)
+            throws UserAlreadyExistAuthenticationException {
         if (userRepository.existsByUsername(userDto.username())) {
             throw new UserAlreadyExistAuthenticationException("User already exists.");
         }
@@ -33,7 +35,7 @@ public class UserService implements UserDetailsService {
         return UserMapper.toDto(user);
     }
 
-    public UserDto readUser(String username) {
+    public UserResponseDto readUser(String username) {
         Optional<User> optUser = userRepository.findByUsername(username);
         if (optUser.isEmpty()) {
             throw new UsernameNotFoundException("Username not found.");
@@ -41,7 +43,7 @@ public class UserService implements UserDetailsService {
         return UserMapper.toDto(optUser.get());
     }
 
-    public UserDto updateUser(String username, UserDto userDto)
+    public UserResponseDto updateUser(String username, UserRequestDto userDto)
             throws UserAlreadyExistAuthenticationException {
         User savedUser;
 
