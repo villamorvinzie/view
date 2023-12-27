@@ -6,6 +6,7 @@ echo "[git hook] executing maven verify phase before commit."
 git stash -q --keep-index
 
 # run verify
+cd backend
 ./mvnw verify
 
 # store the last exit code in a variable
