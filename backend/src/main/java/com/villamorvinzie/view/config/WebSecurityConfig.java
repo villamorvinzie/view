@@ -14,6 +14,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
 
 @Configuration
 @EnableWebSecurity(debug = true)
@@ -34,6 +35,11 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .csrf(customizer -> customizer.disable())
+                .cors(
+                        customizer -> {
+                            customizer.configurationSource(
+                                    req -> new CorsConfiguration().applyPermitDefaultValues());
+                        })
                 .authorizeHttpRequests(
                         customizer -> {
                             customizer

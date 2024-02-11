@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.villamorvinzie.view.enums.ActivityType;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @JsonInclude(value = Include.NON_NULL)
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
@@ -13,6 +13,7 @@ public record ActivityRequestDto(
         String id,
         ActivityType type,
         Boolean isDone,
-        LocalDate dueDate,
+        LocalDateTime dueDate,
         Double amount,
-        Boolean isDeleted) {}
+        Boolean isDeleted,
+        String description) {}

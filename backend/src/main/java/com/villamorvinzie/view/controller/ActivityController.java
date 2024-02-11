@@ -4,7 +4,9 @@ import com.villamorvinzie.view.dto.request.ActivityRequestDto;
 import com.villamorvinzie.view.dto.response.ActivityResponseDto;
 import com.villamorvinzie.view.exception.ActivityNotFoundException;
 import com.villamorvinzie.view.service.ActivityService;
+import java.time.LocalDate;
 import java.util.List;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -39,8 +42,18 @@ public class ActivityController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ActivityResponseDto>> findAll() {
-        return ResponseEntity.ok().body(activityService.findAll());
+    ResponseEntity<List<ActivityResponseDto>> findAll(
+            @RequestParam(name = "from", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+                    LocalDate from,
+            @RequestParam(name = "to", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+                    LocalDate to) {
+        List<ActivityResponseDto> response;
+        if (from == null || to == null) {
+            response = activityService.findAll();
+        } else {
+            response = activityService.findAllByCreatedBetween(from, to);
+        }
+        return ResponseEntity.ok().body(response);
     }
 
     @DeleteMapping(path = "/{id}")

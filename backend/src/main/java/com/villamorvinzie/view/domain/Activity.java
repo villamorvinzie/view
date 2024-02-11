@@ -2,7 +2,7 @@ package com.villamorvinzie.view.domain;
 
 import com.villamorvinzie.view.enums.ActivityType;
 import jakarta.validation.constraints.NotEmpty;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -14,8 +14,10 @@ public class Activity {
     @NotEmpty private boolean isDeleted;
     @NotEmpty private ActivityType type;
     private boolean isDone;
-    private LocalDate dueDate;
+    private LocalDateTime dueDate;
+    private LocalDateTime created;
     private Double amount;
+    private String description;
 
     public Activity(
             String id,
@@ -23,15 +25,19 @@ public class Activity {
             @NotEmpty boolean isDeleted,
             @NotEmpty ActivityType type,
             boolean isDone,
-            LocalDate dueDate,
-            Double amount) {
+            LocalDateTime dueDate,
+            LocalDateTime created,
+            Double amount,
+            String description) {
         this.id = id;
         this.userId = userId;
         this.isDeleted = isDeleted;
         this.type = type;
         this.isDone = isDone;
         this.dueDate = dueDate;
+        this.created = created;
         this.amount = amount;
+        this.description = description;
     }
 
     public String getId() {
@@ -74,12 +80,20 @@ public class Activity {
         this.isDone = isDone;
     }
 
-    public LocalDate getDueDate() {
+    public LocalDateTime getDueDate() {
         return dueDate;
     }
 
-    public void setDueDate(LocalDate dueDate) {
+    public void setDueDate(LocalDateTime dueDate) {
         this.dueDate = dueDate;
+    }
+
+    public LocalDateTime getCreated() {
+        return created;
+    }
+
+    public void setCreated(LocalDateTime created) {
+        this.created = created;
     }
 
     public Double getAmount() {
@@ -88,5 +102,13 @@ public class Activity {
 
     public void setAmount(Double amount) {
         this.amount = amount;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

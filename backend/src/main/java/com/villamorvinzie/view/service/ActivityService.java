@@ -7,6 +7,7 @@ import com.villamorvinzie.view.dto.response.ActivityResponseDto;
 import com.villamorvinzie.view.exception.ActivityNotFoundException;
 import com.villamorvinzie.view.mapper.ActivityMapper;
 import com.villamorvinzie.view.repository.ActivityRepository;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.security.core.Authentication;
@@ -47,6 +48,16 @@ public class ActivityService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User authUser = (User) authentication.getCredentials();
         return activityRepository.findAllByUserId(authUser.getId()).stream()
+                .map(a -> ActivityMapper.toDto(a))
+                .collect(Collectors.toList());
+    }
+
+    public List<ActivityResponseDto> findAllByCreatedBetween(LocalDate from, LocalDate to) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User authUser = (User) authentication.getCredentials();
+        return activityRepository
+                .findAllByUserIdAndCreatedBetween(authUser.getId(), from.atStartOfDay(), to.atStartOfDay())
+                .stream()
                 .map(a -> ActivityMapper.toDto(a))
                 .collect(Collectors.toList());
     }
